@@ -13,9 +13,13 @@ def task_api_info():
     }
     
     
-#Return all tasks
-def list_tasks():
-    return tasks
+#Return all tasks or filter by done
+def list_tasks(done: bool | None = None):
+    
+    if done is None:
+        return tasks
+    
+    return [task for task in tasks if task["done"] == done]
 
 
 #Return task by id

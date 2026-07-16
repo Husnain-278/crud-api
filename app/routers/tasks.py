@@ -19,8 +19,8 @@ def health():
     
     
 @router.get("/tasks", description="Returns a list of all available tasks.")
-def tasks():
-    return task_service.list_tasks()
+def tasks(done: bool | None = None):
+    return task_service.list_tasks(done)
 
 
 @router.get("/tasks/{task_id}", description="Returns a single task by its ID.")
