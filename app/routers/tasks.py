@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.services import task_service
+from app.schemas.task import TaskCreate
 
 router = APIRouter(prefix="", tags=["Tasks"])
 
@@ -24,3 +25,8 @@ def tasks():
 @router.get("/tasks/{task_id}")
 def task(task_id: int):
     return task_service.task(task_id)
+
+
+@router.post("/tasks")
+def create_task(task: TaskCreate):
+    return task_service.create_task(task.title)
