@@ -1,7 +1,9 @@
 
 
 
-def hello_server():
+def task_api_info():
     return {
-        "message": "Hello Server"
+        "name": "Task API",
+        "version": "1.0",
+        "endpoints": ["/","/health","/tasks"]
     }

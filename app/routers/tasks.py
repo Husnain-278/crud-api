@@ -5,5 +5,12 @@ router = APIRouter(prefix="", tags=["Tasks"])
 
 
 @router.get("/")
-def greetings():
-    return task_service.hello_server()
+def task_api():
+    return task_service.task_api_info()
+
+
+@router.get("/health")
+def health():
+    return {
+        "status": "ok"
+    }
