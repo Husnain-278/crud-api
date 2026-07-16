@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.services import task_service
-from app.schemas.task import TaskCreate
+from app.schemas.task import TaskCreate, TaskUpdate
+from fastapi import status
 
 router = APIRouter(prefix="", tags=["Tasks"])
 
@@ -30,3 +31,13 @@ def task(task_id: int):
 @router.post("/tasks")
 def create_task(task: TaskCreate):
     return task_service.create_task(task.title)
+
+
+@router.patch("/tasks/{task_id}")
+def update_task(task_id: int, task: TaskUpdate):
+    return task_service.update_task(task_id, task)
+
+
+@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int):
+    return task_service.delete_task(task_id)
