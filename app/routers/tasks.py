@@ -14,3 +14,13 @@ def health():
     return {
         "status": "ok"
     }
+    
+    
+@router.get("/tasks")
+def tasks():
+    return task_service.list_tasks()
+
+
+@router.get("/tasks/{task_id}")
+def task(task_id: int):
+    return task_service.task(task_id)
