@@ -8,7 +8,7 @@ from app.schemas.task import TaskUpdate
 def task_api_info():
     return {
         "name": "Task API",
-        "version": "1.0",
+        "version": "1.0.0",
         "endpoints": ["/","/health","/tasks"]
     }
     
