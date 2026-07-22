@@ -114,6 +114,72 @@ def create_task(title: str):
     
     
 
+def update_task(task_id: int, title: str | None = None, done: bool | None = None):
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row is None:
+        connection.close()
+        return None
+
+    new_title = title if title is not None else row["title"]
+    new_done = done if done is not None else bool(row["done"])
+
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET title = ?, done = ?
+        WHERE id = ?
+        """,
+        (new_title, new_done, task_id),
+    )
+
+    connection.commit()
+
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,),
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "done": bool(row["done"]),
+    }
+
+
+
+def delete_task(task_id: int):
+    connection = sqlite3.connect(DB_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,),
+    )
+
+    connection.commit()
+
+    deleted = cursor.rowcount
+
+    connection.close()
+
+    return deleted > 0
+
+    
+
 tasks = [
     {
         "id": 1,

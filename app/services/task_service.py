@@ -4,7 +4,10 @@ from fastapi.responses import JSONResponse
 from fastapi import status
 from app.schemas.task import TaskUpdate
 from app.data.storage import get_all_tasks, get_task_by_id, create_task as db_create_task
-
+from app.data.storage import (
+    update_task as db_update_task,
+    delete_task as db_delete_task,
+)
 
 
 def task_api_info():
@@ -56,32 +59,27 @@ def create_task(title: str):
 
 #Update task
 def update_task(task_id: int, update: TaskUpdate):
-    for task in tasks:
-        if task["id"] == task_id:
-            
-            if update.title is not None:
-                task["title"] = update.title
-            
-            if update.done is not None:
-                task["done"] =  update.done
-                
-            return task
-    
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Task {task_id} not found"
+    task = db_update_task(
+        task_id,
+        update.title,
+        update.done,
     )
-    
+
+    if task is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task {task_id} not found",
+        )
+
+    return task
     
 
 #Delete a task
-def delete_task(task_id):
-    for task in tasks:
-        if task["id"] == task_id:
-            tasks.remove(task)
-            return
-            
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Task {task_id} not found"
-    )
+def delete_task(task_id: int):
+    deleted = db_delete_task(task_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task {task_id} not found",
+        )
