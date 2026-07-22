@@ -150,6 +150,23 @@ You can test every endpoint directly from the browser using the **Try it out** b
 
 ---
 
+
+## Stage 4 – Exploring SQLite
+
+During this stage, I explored the SQLite database using the sqlite3 command-line tool.
+
+### Commands Used
+
+```sql
+.tables
+.schema tasks
+.headers on
+.mode column
+SELECT * FROM tasks;
+SELECT COUNT(*) FROM tasks;
+SELECT * FROM tasks WHERE id = 1;
+
+
 # 📁 Project Structure
 
 ```text
