@@ -84,6 +84,35 @@ def get_task_by_id(task_id: int):
         "title": row["title"],
         "done": bool(row["done"]),
     }
+    
+    
+
+def create_task(title: str):
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
+    
+    cursor = connection.cursor()
+    
+    cursor.execute(
+        "INSERT INTO tasks (title, done) VALUES (?, ?)",
+        (title, False),
+    )
+    connection.commit()
+    task_id = cursor.lastrowid
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,),
+    )
+    row = cursor.fetchone()
+    connection.close()
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "done": bool(row["done"]),
+    }
+
+    
+    
 
 tasks = [
     {

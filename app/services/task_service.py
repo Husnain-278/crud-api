@@ -3,7 +3,8 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi import status
 from app.schemas.task import TaskUpdate
-from app.data.storage import get_all_tasks, get_task_by_id
+from app.data.storage import get_all_tasks, get_task_by_id, create_task as db_create_task
+
 
 
 def task_api_info():
@@ -37,17 +38,19 @@ def task(task_id: int):
     
 #Create Task
 def create_task(title: str):
-    new_id = max((task["id"] for task in tasks), default=0) + 1
-    task_to_append = {
-        "id": new_id,
-        "title": title,
-        "done": False
-    }
-    tasks.append(task_to_append)
+    if not title.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Title cannot be empty",
+        )
+    
+    task = db_create_task(title)
+
     return JSONResponse(
-        content=task_to_append,
+        content=task,
         status_code=status.HTTP_201_CREATED,
     )
+        
     
     
 
