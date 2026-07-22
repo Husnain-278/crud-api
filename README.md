@@ -1,16 +1,24 @@
+
 # 🚀 Task CRUD API
 
-A simple **Task CRUD API** built with **FastAPI** for learning REST APIs.
+A simple **Task CRUD API** built with **FastAPI** and **SQLite**.
 
-This project demonstrates the core CRUD operations using an in-memory list as the data store.
+This project demonstrates a complete CRUD API while following a layered architecture:
 
-## ✨ Features
+**Router → Service → Storage → SQLite**
+
+The application originally used an in-memory list and was migrated to **SQLite** for persistent data storage.
+
+---
+
+# ✨ Features
 
 - List all tasks
 - Get a single task by ID
 - Create a new task
 - Update an existing task
 - Delete a task
+- Persistent SQLite storage
 - Interactive Swagger UI
 - Automatic OpenAPI documentation
 
@@ -20,6 +28,7 @@ This project demonstrates the core CRUD operations using an in-memory list as th
 
 - Python 3.12+
 - FastAPI
+- SQLite (`sqlite3`)
 - Uvicorn
 - Pydantic
 - uv (Package Manager)
@@ -28,40 +37,40 @@ This project demonstrates the core CRUD operations using an in-memory list as th
 
 # 📦 Installation
 
-### 1. Clone the repository
+## 1. Clone the repository
 
 ```bash
 git clone https://github.com/<your-username>/task-crud-api.git
 cd task-crud-api
 ```
 
-### 2. Create a virtual environment
+## 2. Create a virtual environment
 
 ```bash
 uv venv
 ```
 
-### 3. Activate it
+## 3. Activate it
 
-**Linux / macOS**
+### Linux / macOS
 
 ```bash
 source .venv/bin/activate
 ```
 
-**Windows**
+### Windows
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-### 4. Install dependencies
+## 4. Install dependencies
 
 ```bash
 uv sync
 ```
 
-### 5. Run the API
+## 5. Run the application
 
 ```bash
 uv run uvicorn app.main:app --reload
@@ -95,67 +104,27 @@ http://127.0.0.1:8000/docs
 
 ---
 
-# Example Request
+# 🗄 Database
 
-Create a task
+The project now uses **SQLite** for persistent storage.
 
-```bash
-curl -i -X POST http://localhost:8000/tasks \
--H "Content-Type: application/json" \
--d '{"title":"Buy milk"}'
+Database location:
+
+```
+app/data/tasks.db
 ```
 
-Example Response
+On startup the application:
 
-```http
-HTTP/1.1 201 Created
-date: Thu, 16 Jul 2026 07:48:39 GMT
-server: uvicorn
-content-length: 40
-content-type: application/json
-
-{"id":4,"title":"Buy milk","done":false}
-```
+- Creates the database if it does not exist.
+- Creates the `tasks` table automatically.
+- Inserts sample tasks only on the first run.
 
 ---
 
-# 📖 API Documentation
+# 🔍 Exploring SQLite
 
-FastAPI automatically generates interactive API documentation.
-
-Open:
-
-```
-http://127.0.0.1:8000/docs
-```
-
-You can test every endpoint directly from the browser using the **Try it out** button.
-
----
-
-# 📸 Screenshots
-
-## Swagger UI
-
-
-![Swagger UI](images/Swagger_ui_screenshot.png)
-
----
-
-## CURL Example
-
-
-
-![cURL Output](images/curl_screenshot.png)
-
----
-
-
-## Stage 4 – Exploring SQLite
-
-During this stage, I explored the SQLite database using the sqlite3 command-line tool.
-
-### Commands Used
+Commands used during Stage 4:
 
 ```sql
 .tables
@@ -165,14 +134,46 @@ During this stage, I explored the SQLite database using the sqlite3 command-line
 SELECT * FROM tasks;
 SELECT COUNT(*) FROM tasks;
 SELECT * FROM tasks WHERE id = 1;
+SELECT * FROM tasks WHERE done = 1;
+SELECT * FROM tasks ORDER BY id DESC;
+```
 
+---
+
+# 📖 What I Learned
+
+- Connecting to SQLite using Python's `sqlite3` module.
+- Creating tables with SQL.
+- Using parameterized SQL queries (`?`) to prevent SQL injection.
+- Implementing CRUD operations with SQL.
+- Using `fetchone()` and `fetchall()`.
+- Using `sqlite3.Row` to access columns by name.
+- Structuring a FastAPI project using Router → Service → Storage architecture.
+- Inspecting a SQLite database using the SQLite command-line tool.
+
+---
+
+# 📸 Screenshots
+
+## Swagger UI
+
+![Swagger UI](images/Swagger_ui_screenshot.png)
+
+---
+
+## cURL Output
+
+![cURL Output](images/curl_screenshot.png)
+
+---
 
 # 📁 Project Structure
 
 ```text
 app/
 ├── data/
-│   └── storage.py
+│   ├── storage.py
+│   └── tasks.db
 ├── routers/
 │   └── tasks.py
 ├── schemas/
@@ -184,6 +185,16 @@ app/
 
 ---
 
+# 🚀 Future Improvements
+
+- Add pagination.
+- Add search functionality.
+- Add authentication.
+- Add automated tests.
+- Migrate to SQLModel or SQLAlchemy for larger applications.
+
+---
+
 # License
 
-This project is created for learning FastAPI and REST API development.
+This project was created for learning FastAPI, REST APIs, and SQLite.
