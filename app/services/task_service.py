@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi import status
 from app.schemas.task import TaskUpdate
+from app.data.storage import get_all_tasks, get_task_by_id
 
 
 def task_api_info():
@@ -15,7 +16,7 @@ def task_api_info():
     
 #Return all tasks or filter by done
 def list_tasks(done: bool | None = None):
-    
+    tasks = get_all_tasks()
     if done is None:
         return tasks
     
@@ -23,15 +24,16 @@ def list_tasks(done: bool | None = None):
 
 
 #Return task by id
-def task(id):
-    for task in tasks:
-       if task["id"] == id:
-           return task
-    
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Task {id} not found"
-    )
+def task(task_id: int):
+    task = get_task_by_id(task_id)
+
+    if task is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task {task_id} not found",
+        )
+
+    return task
     
 #Create Task
 def create_task(title: str):

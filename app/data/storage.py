@@ -1,5 +1,7 @@
 import sqlite3
 from pathlib import Path
+from fastapi import HTTPException
+from fastapi import status
 
 DB_PATH = Path(__file__).parent / "tasks.db"
 
@@ -41,9 +43,47 @@ def initialize_database():
     connection.close()
     
     
+def get_all_tasks():
+    connection = sqlite3.connect(DB_PATH)    
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM tasks")
+    rows = cursor.fetchall()
+    tasks = []
+    for row in rows:
+        tasks.append({
+            "id": row['id'],
+            "title": row["title"],
+            "done": bool(row["done"]),
+        })
+    
+    connection.close()
+    return tasks    
     
     
+def get_task_by_id(task_id: int):
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
 
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,),
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if row is None:
+        return None
+
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "done": bool(row["done"]),
+    }
 
 tasks = [
     {
